@@ -1,0 +1,31 @@
+Host github.com
+    IdentityFile ~/.ssh/github.key
+
+Host git.cs.hut.fi
+    IdentityFile ~/.ssh/gitcs.key
+
+Host git.niksula.hut.fi
+    IdentityFile ~/.ssh/gitniksula.key
+
+Host mannerheim
+    HostName mannerheim.cs.hut.fi
+    User yangdeng
+    IdentityFile ~/.ssh/mannerheim.key
+
+Host desktop
+    HostName 130.233.193.74
+    User yangdeng
+    IdentityFile ~/.ssh/desktop.key
+    ProxyCommand ssh mannerheim nc %h %p
+
+Host otax
+    HostName otax.ayy.fi
+    User cssa
+    IdentityFile ~/.ssh/otax.key
+
+Host tunnel
+    HostName mannerheim.cs.hut.fi
+    User yangdeng
+    DynamicForward 8080
+    IdentityFile ~/.ssh/mannerheim.key
+

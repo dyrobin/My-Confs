@@ -1,0 +1,13 @@
+"indent
+set autoindent
+set expandtab
+set smarttab
+set shiftwidth=4
+set softtabstop=4
+
+"display
+set number
+syntax on
+
+"tab for makefile
+autocmd FileType make set noexpandtab
