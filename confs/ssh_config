@@ -1,12 +1,7 @@
-Host me.github.com
+Host github.com
     User git
     HostName github.com
-    IdentityFile ~/.ssh/github-me.key
-
-Host dcs.github.com
-    User git
-    HostName github.com
-    IdentityFile ~/.ssh/github-dcs.key
+    IdentityFile ~/.ssh/github.key
 
 Host kanssani
     User kanssani
@@ -19,25 +14,44 @@ Host otax
     HostName otax.ayy.fi
     IdentityFile ~/.ssh/otax.key
 
+### Following configs might be unavaialbe soon
+Host git.cs.hut.fi
+    User git
+    IdentityFile ~/.ssh/gitcs.key
 
-### examples for remote setup ###
-# gateway
-#Host mannerheim
-#    HostName mannerheim.cs.hut.fi
-#    User yangdeng
-#    IdentityFile ~/.ssh/mannerheim.key
+Host git.niksula.hut.fi
+    User git
+    IdentityFile ~/.ssh/gitniksula.key
 
-# desktop
+Host mannerheim
+    HostName mannerheim.cs.hut.fi
+    User yangdeng
+    IdentityFile ~/.ssh/mannerheim.key
+
+# tunnel to intranet of CSE (needs to set socks proxy manually)
+Host tunnel
+    HostName mannerheim.cs.hut.fi
+    User yangdeng
+    DynamicForward 8080
+    IdentityFile ~/.ssh/mannerheim.key
+
+
+### example for direct connection to desktop behind gateway
 #Host desktop
 #    HostName 130.233.193.74
 #    User yangdeng
 #    IdentityFile ~/.ssh/desktop.key
 #    ProxyCommand ssh mannerheim nc %h %p
 
-# tunnel
-#Host tunnel
-#    HostName mannerheim.cs.hut.fi
-#    User yangdeng
-#    DynamicForward 8080
-#    IdentityFile ~/.ssh/mannerheim.key
+
+### example for multi accounts of github
+#Host account1.github.com
+#    User git
+#    HostName github.com
+#    IdentityFile ~/.ssh/account1.key
+
+#Host account2.github.com
+#    User git
+#    HostName github.com
+#    IdentityFile ~/.ssh/account2.key
 
