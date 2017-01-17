@@ -2,25 +2,25 @@
 
 # entry format: <hostname user ipAddr macAddr>
 hosts_data="
-    dyrobin-T410s dyrobin 192.168.1.106 f0def123ca90
-    personalcloud dyrobin 192.168.1.110 001075587cd5
+    T410s         dyrobin 192.168.0.111 f0def123ca90
+    personalcloud dyrobin 192.168.0.110 001075587cd5
     "
 
-# removing leading and trailing spaces as well as blank lines
-hosts_data_clean=$(echo "$hosts_data" | sed -e 's/^ *//; s/ *$//; /^$/d')
+# sqeeze multiple spaces and remove leading and trailing spaces as well as blank lines
+hosts_data_clean=$(echo "$hosts_data" | tr -s ' ' | sed -e 's/^ *//; s/ *$//; /^$/d')
 
 # $1: hostname 
 # $2: the-nth field of entry
 # $3: return variable name
 function getFieldData() {
-    local __retval=$3
+    local __retval="$3"
     local entry=$(echo "$hosts_data_clean" | grep "^$1 ")
     if [ -z "$entry" ]; then
         echo "No hostname matched with '$1'."
         return 1
     fi
 
-    if [ $2 -gt 4 ] || [ $2 -lt 1 ]; then
+    if [ "$2" -gt 4 ] || [ "$2" -lt 1 ]; then
         echo "No valid field '$2'. Must be 1, 2, 3, or 4."
         return 1
     fi
@@ -42,7 +42,7 @@ function isOn() {
     if [ $ping_ok -eq 0 ]; then
         ipaddr_tgt=$(echo "$ping_output" | grep -E -o '\(([0-9]{1,3}\.){3}[0-9]{1,3}\)' | sed -e 's/[\(\)]//g')
         if [ "$ipaddr_tgt" != "$ipaddr" ]; then
-            echo "IP Address of '$1' is changed to '$ipaddr_tgt'."
+            echo "IP Address of '$1' is changed from '$ipaddr' to '$ipaddr_tgt'."
             ipaddr=$ipaddr_tgt
         fi
     else
@@ -76,21 +76,19 @@ function ctlHost() {
 
     case $2 in
         on)
-            isOn "$hostname"
-            if [ $? -ne 0 ]; then
-                getFieldData "$hostname" 4 macaddr 
-                if [ -z "$macaddr" ]; then
-                    echo "No mac address was found for '$hostname'."
-                    return 2
-                fi
-                local OS=$(uname -s)
-                if [ $OS == "Darwin" ]; then
-                    ./wolcmd "$macaddr" 255.255.255.255 255.255.255.255 1234
-                elif [ $OS == "Linux" ]; then
-                    wakeonlan "$macaddr"
-                fi
+            # invoke WakeupOnLAN directly regredless of return value of isOn
+            getFieldData "$hostname" 4 macaddr 
+            if [ -z "$macaddr" ]; then
+                echo "No mac address was found for '$hostname'."
+                return 2
+            fi
+            local OS=$(uname -s)
+            if [ "$OS" == "Darwin" ]; then
+                ./wolcmd "$macaddr" 255.255.255.255 255.255.255.255 1234
+            elif [ "$OS" == "Linux" ]; then
+                wakeonlan "$macaddr"
             else
-                echo "Oops. '$hostname' has been on already."
+                echo "Not support for '$OS'."
             fi
         ;;
         off)
@@ -103,7 +101,7 @@ function ctlHost() {
                 fi
                 ssh -t "$username"@"$ipaddr" "sudo shutdown now"
             else
-                echo "Oops. '$hostname' has been off already."
+                echo "'$hostname' is offline."
             fi
         ;;
         sleep)
@@ -117,7 +115,7 @@ function ctlHost() {
                 # Try invoking different command for different os
                 ssh -t "$username"@"$ipaddr" "sudo pm-suspend || sudo shutdown -s now"
             else
-                echo "Oops. '$hostname' has been off already."
+                echo "'$hostname' is offline."
             fi
         ;;
         *)
@@ -127,7 +125,7 @@ function ctlHost() {
 }
 
 # main
-if [ $# -eq 1 ] && [ $1 == "list" ]; then
+if [ $# -eq 1 ] && [ "$1" == "list" ]; then
     listHosts
 elif [ $# -eq 2 ]; then
     ctlHost "$1" "$2"
