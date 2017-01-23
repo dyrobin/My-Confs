@@ -25,7 +25,7 @@ function getFieldData() {
         return 1
     fi
 
-    eval $__retval=$(echo "$entry" | cut -f $2 -d " ")
+    eval $__retval=$(echo "$entry" | cut -f "$2" -d " ")
 }
 
 # $1: hostname
@@ -43,7 +43,7 @@ function isOn() {
         ipaddr_tgt=$(echo "$ping_output" | grep -E -o '\(([0-9]{1,3}\.){3}[0-9]{1,3}\)' | sed -e 's/[\(\)]//g')
         if [ "$ipaddr_tgt" != "$ipaddr" ]; then
             echo "IP Address of '$1' is changed from '$ipaddr' to '$ipaddr_tgt'."
-            ipaddr=$ipaddr_tgt
+            ipaddr="$ipaddr_tgt"
         fi
     else
         # Ping domain failed, then ping IP address directly
@@ -64,7 +64,7 @@ function listHosts() {
 # $1: hostname pattern
 # $2: control options: on|off|sleep
 function ctlHost() {
-    hostname=$(listHosts | grep  $1)
+    hostname=$(listHosts | grep "$1")
     if [ -z "$hostname" ]; then
         echo "No hosts are matched with '$1'. See all hosts by specifying list option."
         return 1
