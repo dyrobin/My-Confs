@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# This script renames (matches) a serial of files in sub_dir to their corresponding
+# This script renames subtitles in sub_dir to their corresponding
 # movie name in mv_dir based on extracted episode index
 
 if [ $# -ne 2 ]; then
